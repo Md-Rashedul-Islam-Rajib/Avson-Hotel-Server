@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -38,8 +38,7 @@ app.get('/rooms',async(req,res)=> {
   res.send(result);
 })
 
-
-// get api for all room details and update data
+// get api for single room details and update data
 app.get('/room/:id', async (req,res)=> {
   const id = req.params.id;
   const query = { _id : new ObjectId(id)};
@@ -47,6 +46,26 @@ app.get('/room/:id', async (req,res)=> {
   res.send(result);
 })
 
+
+
+// get api for filter option 
+app.get('/filter/:minPrice/:maxPrice', async (req, res) => {
+  const minPrice = parseFloat(req.params.minPrice);
+  const maxPrice = parseFloat(req.params.maxPrice);
+
+ 
+  if (isNaN(minPrice) || isNaN(maxPrice)) {
+      return res.status(400).json({ error: 'Invalid price range' });
+  }
+  const cursor = roomCollection.find({
+      price: {
+          $gte: minPrice,
+          $lte: maxPrice
+      }
+  })
+  const result = await cursor.toArray();
+  res.send(result);
+});
 
 
 
