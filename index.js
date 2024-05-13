@@ -30,6 +30,7 @@ async function run() {
     // await client.db("admin").command({ ping: 1 });
 
     const roomCollection = client.db('roomDB').collection('room');
+    const bookingCollection = client.db('roomDB').collection('bookings');
 
 // get api for room data
 app.get('/rooms',async(req,res)=> {
@@ -69,7 +70,13 @@ app.get('/filter/:minPrice/:maxPrice', async (req, res) => {
 
 
 
-
+// post api for adding room booking info
+app.post('/bookings', async (req,res)=> {
+  const booking = req.body;
+  console.log(booking);
+  const result = await bookingCollection.insertOne(booking);
+  res.send(result)
+})
 
 
 
