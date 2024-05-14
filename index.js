@@ -86,17 +86,17 @@ app.get('/bookings',async(req,res)=> {
 })
 
 
- // put api for add review data 
+               // put api for add review data 
  app.put('/room/:id',async (req,res)=>{
   const id = req.params.id;
   const item = req.body;
-  const { reviewText,rating} = item;
+  console.log(item);
   const filter = {_id : new ObjectId(id)};
   const options = {upsert : true};
   const updatedData = {
-    $set: {
- review: reviewText,
- rating : rating
+    $push: {
+ review: item
+ 
 
     }
   };
@@ -105,9 +105,15 @@ app.get('/bookings',async(req,res)=> {
 })
 
 
+// get api for single booking item by id
 
-
-
+app.get('/bookings/:id', async (req,res)=> {
+  const id = req.params.id;
+  console.log(id);
+  const query = { id : id};
+  const result = await bookingCollection.findOne(query);
+  res.send(result);
+})
 
 
 
