@@ -78,9 +78,31 @@ app.post('/bookings', async (req,res)=> {
   res.send(result)
 })
 
+// get api for booking data
+app.get('/bookings',async(req,res)=> {
+  const cursor = bookingCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
 
 
+ // put api for add review data 
+ app.put('/room/:id',async (req,res)=>{
+  const id = req.params.id;
+  const item = req.body;
+  const { reviewText,rating} = item;
+  const filter = {_id : new ObjectId(id)};
+  const options = {upsert : true};
+  const updatedData = {
+    $set: {
+ review: reviewText,
+ rating : rating
 
+    }
+  };
+  const result = await roomCollection.updateOne(filter,updatedData,options);
+  res.send(result);
+})
 
 
 
