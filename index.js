@@ -66,6 +66,9 @@ async function run() {
 
     const roomCollection = client.db('roomDB').collection('room');
     const bookingCollection = client.db('roomDB').collection('bookings');
+    const reviewCollection = client.db('roomDB').collection('reviews');
+
+
 
 
 // auth related api
@@ -102,6 +105,10 @@ app.get('/rooms',async(req,res)=> {
   const result = await cursor.toArray();
   res.send(result);
 })
+
+
+
+
 
 // get api for single room details and update data
 app.get('/room/:id', async (req,res)=> {
@@ -142,6 +149,10 @@ app.get('/filter/:minPrice/:maxPrice', async (req, res) => {
 
 
 
+
+
+
+
 // post api for adding room booking info
 app.post('/bookings', async (req,res)=> {
   const booking = req.body;
@@ -151,31 +162,40 @@ app.post('/bookings', async (req,res)=> {
   res.send(result)
 })
 
+
+
+
+
+
+
 // get api for booking data
-app.get('/bookings',logger,verifyToken, async(req,res)=> {
+app.get('/bookings', async(req,res)=> {
   const cursor = bookingCollection.find();
   const result = await cursor.toArray();
   res.send(result);
 })
 
 
-               // patch api for add review data 
- app.patch('/room/:id',async (req,res)=>{
+
+
+
+
+
+
+               // post api for add review data 
+ app.post('/reviews',async (req,res)=>{
   const id = req.params.id;
   const item = req.body;
   console.log(item);
-  const filter = {_id : new ObjectId(id)};
-  const options = {upsert : true};
-  const updatedData = {
-    $set: {
- totalReview: item
- 
-
-    }
-  }
-  const result = await roomCollection.updateOne(filter,updatedData,options);
+  const result = await reviewCollection.insertOne(item);
+  
+  
   res.send(result);
 })
+
+
+
+
 
 
 
@@ -190,6 +210,12 @@ app.get('/bookings/:id', async (req,res)=> {
   const result = await bookingCollection.findOne(query);
   res.send(result);
 })
+
+
+
+
+
+
 
 
 
@@ -210,6 +236,12 @@ app.put('/bookings/:id',async (req,res)=>{
   const result = await bookingCollection.updateOne(filter,updatedData,options);
   res.send(result);
 })
+
+
+
+
+
+
 
 
 
