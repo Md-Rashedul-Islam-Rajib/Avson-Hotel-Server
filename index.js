@@ -194,6 +194,14 @@ app.get('/bookings', async(req,res)=> {
 })
 
 
+// get api for showing review
+app.get('/reviews/:id', async(req,res)=> {
+  const id = req.params.id;
+  const query = { id : id};
+  const cursor =  reviewCollection.find(query);
+  const result = await cursor.toArray();
+  res.send(result);
+})
 
 
 
