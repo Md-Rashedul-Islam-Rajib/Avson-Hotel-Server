@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
@@ -67,6 +68,7 @@ async function run() {
     const roomCollection = client.db('roomDB').collection('room');
     const bookingCollection = client.db('roomDB').collection('bookings');
     const reviewCollection = client.db('roomDB').collection('reviews');
+    const favoriteCollection = client.db('roomDB').collection('favorites');
 
 
 
@@ -164,6 +166,23 @@ app.post('/bookings', async (req,res)=> {
 
 
 
+// post api for adding room to favorite
+app.post('/favorites', async (req,res)=> {
+  const favorite = req.body;
+  console.log(favorite);
+  console.log('token',req.cookies.token);
+  const result = await favoriteCollection.insertOne(favorite);
+  res.send(result)
+})
+
+
+// get api for favorite room
+app.get('/favorites',async(req,res)=> {
+  const cursor = favoriteCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
+
 
 
 
@@ -198,7 +217,7 @@ app.get('/bookings', async(req,res)=> {
 app.get('/reviews/:id', async(req,res)=> {
   const id = req.params.id;
   const query = { id : id};
-  const cursor =  reviewCollection.find(query);
+  const cursor =  reviewCollection.find(query).sort({ postingTime: -1 });
   const result = await cursor.toArray();
   res.send(result);
 })
